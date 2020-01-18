@@ -36,7 +36,22 @@ class Server extends Proxy
             $headers['HTTP_' . str_replace('-', '_', Str::upper($key))] = $value;
         }
 
-        return array_merge($this->default, $this->getRequest()->getServerParams(), $headers);
+        $result = array_merge($this->default, $this->getRequest()->getServerParams(), $headers);
+        return $this->fmtResult($result);
+    }
+
+    protected function fmtResult($header):array
+    {
+        $result = [];
+        foreach ($header as $key => $item) {
+            $key = strtoupper($key);
+            if (is_array($item)){
+                $result[$key] = $item[0];
+            }else{
+                $result[$key] = $item;
+            }
+        }
+        return $result;
     }
 
     protected function override(ServerRequestInterface $request, array $data): ServerRequestInterface
